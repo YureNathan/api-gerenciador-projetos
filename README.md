@@ -5,7 +5,7 @@ O sistema segue boas práticas de arquitetura, utilizando DTOs, camadas de servi
 
 🚀 Tecnologias Utilizadas
 
-Java 17+
+Java 21
 
 Spring Boot (Web, Security, JPA)
 
