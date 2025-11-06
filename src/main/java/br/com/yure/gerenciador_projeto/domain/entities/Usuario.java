@@ -1,108 +1,54 @@
 package br.com.yure.gerenciador_projeto.domain.entities;
 
-import br.com.yure.gerenciador_projeto.application.dto.UsuarioRequestDTO;
-import br.com.yure.gerenciador_projeto.domain.valueobjects.CPF;
+
+import br.com.yure.gerenciador_projeto.application.dto.usuario.UsuarioCriarRequestDto;
 import br.com.yure.gerenciador_projeto.domain.valueobjects.EnumStatusUsuario;
 import jakarta.persistence.*;
-import java.util.List;
+import lombok.*;
 
-// banco de dados (tabela)
+
 @Entity
+@Getter
+@Setter
+@Table(name = "usuario")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "tipo_usuario", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorValue("USUARIO")
+@AllArgsConstructor
+@NoArgsConstructor
+
 public class Usuario {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String nome;
+
     private String senha;
+
+    @Column(name="tipo_usuario", insertable = false, updatable = false,nullable = true)
+    private String tipo_usuario;
+
     @Embedded
-    private CPF cpf;
     private String email;
+
     private String telefone;
+
     private EnumStatusUsuario status = EnumStatusUsuario.ATIVO;
-    @OneToMany
-    @JoinColumn(name = "usuario_id", nullable = false)
-    private List<Menu>menuacesso;
-    public Usuario(){}
-    public Usuario(UsuarioRequestDTO usuarioRequestDTO) {
-        this.email = usuarioRequestDTO.email();
-        this.senha = usuarioRequestDTO.senha();
-        this.nome = usuarioRequestDTO.nome();
-        this.cpf =  new CPF(usuarioRequestDTO.cpf());
+
+
+    public Usuario (UsuarioCriarRequestDto usuario){
+        this.email =usuario.email();
+        this.senha = usuario.senha();
+        this.nome = usuario.nome();
     }
 
-    public Usuario(Long id, String nome, String senha, CPF cpf, String email, String telefone, EnumStatusUsuario status, List<Menu> menuacesso) {
-        this.id = id;
-        this.nome = nome;
-        this.senha = senha;
-        this.cpf = cpf;
-        this.email = email;
-        this.telefone = telefone;
-        this.status = status;
-        this.menuacesso = menuacesso;
+    public Usuario atulizarUsuarioFromDTO(Usuario usuarioBanco, UsuarioCriarRequestDto dto){
+        usuarioBanco.setEmail(dto.email());
+        usuarioBanco.setNome(dto.nome());
+        usuarioBanco.setSenha(dto.senha());
+        return usuarioBanco;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-
-    public CPF getCpf() {
-        return cpf;
-    }
-
-    public void setCpf(CPF cpf) {
-        this.cpf = cpf;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
-
-    public EnumStatusUsuario getStatus() {
-        return status;
-    }
-
-    public void setStatus(EnumStatusUsuario status) {
-        this.status = status;
-    }
-
-    public List<Menu> getMenuacesso() {
-        return menuacesso;
-    }
-
-    public void setMenuacesso(List<Menu> menuacesso) {
-        this.menuacesso = menuacesso;
-    }
 }
-

@@ -1,26 +1,112 @@
 package br.com.yure.gerenciador_projeto.application.services;
 
-import br.com.yure.gerenciador_projeto.application.dto.UsuarioRequestDTO;
-import br.com.yure.gerenciador_projeto.application.dto.UsuarioResponseDTO;
+import br.com.yure.gerenciador_projeto.application.dto.usuario.UsuarioCriarRequestDto;
+import br.com.yure.gerenciador_projeto.application.dto.usuario.UsuarioResponseDto;
+
 import br.com.yure.gerenciador_projeto.domain.entities.Usuario;
 import br.com.yure.gerenciador_projeto.domain.reposity.UsuarioRepository;
+import br.com.yure.gerenciador_projeto.domain.valueobjects.EnumStatusUsuario;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UsuarioService {
+
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    public List<UsuarioResponseDTO> listarTodos() {
-        List<Usuario> usuarios = usuarioRepository.findAll();
-        return usuarios.stream().map(UsuarioResponseDTO::new).toList();
+    public List<UsuarioResponseDto> listarTodos(){
+
+        try {
+            return  usuarioRepository
+                    .findAllByStatusNot(EnumStatusUsuario.EXCLUIDO)
+                    .stream()
+                    .map(UsuarioResponseDto::new)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public UsuarioResponseDto buscarPorId(Long id){
+
+
+        var usuarioBanco =usuarioRepository.findByIdAndStatusNot(id, EnumStatusUsuario.EXCLUIDO);
+        return usuarioBanco
+                .stream()
+                .map(UsuarioResponseDto::new)
+                .findFirst()
+                .orElse(null);
     }
 
-    public UsuarioResponseDTO salvarUsuario(UsuarioRequestDTO usuarioRequestDTO) {
-        Usuario usuario = new Usuario(usuarioRequestDTO);
-        return new UsuarioResponseDTO(usuarioRepository.save(usuario));
+
+    public UsuarioResponseDto salvarUsuario(UsuarioCriarRequestDto usuarioRequest) throws Exception {
+        Usuario usuario = new Usuario(usuarioRequest);
+        usuarioRepository.save(usuario);
+        return new UsuarioResponseDto(usuario);
+    }
+
+
+    public boolean excluirUsuario(Long id){
+       try{
+            var usuario = usuarioRepository.findById(id).orElse(null);
+
+            if(usuario == null){
+                return false;
+            }
+
+           alterarStatusUsuario(usuario,EnumStatusUsuario.EXCLUIDO);
+
+            return true;
+       }catch (Exception e){
+           System.out.print("Erro ao excluir usuaria!");
+           return false;
+       }
+    }
+
+    public boolean bloquearUsuario(Long id){
+
+        try {
+
+            var usuario = usuarioRepository.findByIdAndStatusNot(id,EnumStatusUsuario.EXCLUIDO).orElse(null);
+
+            if(usuario == null){
+                return false;
+            }
+
+            alterarStatusUsuario(usuario,EnumStatusUsuario.BLOQUEADO);
+
+            return true;
+        }catch (Exception e){
+            System.out.println("Erro ao bloquear usuario!");
+            return false;
+        }
+    }
+
+
+    public boolean desbloquearUsuario(Long id){
+
+        try {
+
+            var usuario = usuarioRepository.findByIdAndStatusNot(id,EnumStatusUsuario.EXCLUIDO).orElse(null);
+
+            if(usuario == null){
+                return false;
+            }
+
+            alterarStatusUsuario(usuario,EnumStatusUsuario.ATIVO);
+            return true;
+        }catch (Exception e){
+            System.out.println("Erro ao bloquear usuario!");
+            return false;
+        }
+    }
+
+    private void alterarStatusUsuario(Usuario usuario, EnumStatusUsuario statusUsuario){
+        usuario.setStatus(statusUsuario);
+        usuarioRepository.save(usuario);
     }
 }
