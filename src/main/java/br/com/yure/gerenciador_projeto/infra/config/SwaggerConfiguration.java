@@ -1,4 +1,5 @@
 package br.com.yure.gerenciador_projeto.infra.config;
+
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -11,21 +12,24 @@ import org.springframework.context.annotation.Configuration;
 public class SwaggerConfiguration {
 
     @Bean
-    public OpenAPI customOpenApi(){
+    public OpenAPI customOpenApi() {
 
         return new OpenAPI()
+
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
-                .components(new Components().addSecuritySchemes("bearerAuth",
-                        new SecurityScheme()
-                                .type(SecurityScheme.Type.HTTP)
-                                .scheme("bearer")
-                                .bearerFormat("JWT")
-                ))
+                .components(new Components()
+                        .addSecuritySchemes("bearerAuth",
+                                new SecurityScheme()
+                                        .type(SecurityScheme.Type.HTTP)
+                                        .scheme("bearer")
+                                        .bearerFormat("JWT")
+                        )
+                )
                 .info(new Info()
-                .title("API Aula Jovem")
-                .version("1.0")
-                .description("API responsavel por apresentar codigos e didaticas aos alunos do jovem programador!")
-                .termsOfService("http://mtxsistemas.tech")
-        );
+                        .title("API Gerenciador de Projetos ")
+                        .version("1.0.0")
+                        .description("API para gerenciamento de projetos com autenticação JWT e controle de usuários.")
+                        .termsOfService("https://docs.spring.io/spring-boot/index.html")
+                );
     }
 }

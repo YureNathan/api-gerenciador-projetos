@@ -8,10 +8,10 @@
 		<version>3.5.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.senac</groupId>
-	<artifactId>aulaapijovemprogramador</artifactId>
+	<groupId>br.com.yure</groupId>
+	<artifactId>gerenciador_projeto</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>aulaapijovemprogramador</name>
+	<name>gerenciador_projeto</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
@@ -81,6 +81,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
+
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+        </dependency>
 
 
 	</dependencies>
