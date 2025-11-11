@@ -1,7 +1,6 @@
 package br.com.yure.gerenciador_projeto.application.dto.usuario;
 
 
-import br.com.yure.gerenciador_projeto.domain.entities.Administrador;
 import br.com.yure.gerenciador_projeto.domain.entities.Usuario;
 
 public record UsuarioResponseDto(Long id, String nome,
@@ -9,16 +8,6 @@ public record UsuarioResponseDto(Long id, String nome,
 
 
     public UsuarioResponseDto(Usuario usuario){
-        this(
-                usuario.getId(),
-                usuario.getNome(),
-                usuario.getTelefone(),
-                usuario.getEmail(),
-                usuario.getStatus().toString()
-        );
-    }
-
-    public UsuarioResponseDto(Administrador usuario){
         this(
                 usuario.getId(),
                 usuario.getNome(),

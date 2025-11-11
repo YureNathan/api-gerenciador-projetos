@@ -34,7 +34,7 @@ public class UsuarioService {
     public UsuarioResponseDto buscarPorId(Long id){
 
 
-        var usuarioBanco =usuarioRepository.findByIdAndStatusNot(id, EnumStatusUsuario.EXCLUIDO);
+        var usuarioBanco = usuarioRepository.findByIdAndStatusNot(id, EnumStatusUsuario.EXCLUIDO);
         return usuarioBanco
                 .stream()
                 .map(UsuarioResponseDto::new)
@@ -59,7 +59,6 @@ public class UsuarioService {
             }
 
            alterarStatusUsuario(usuario,EnumStatusUsuario.EXCLUIDO);
-
             return true;
        }catch (Exception e){
            System.out.print("Erro ao excluir usuaria!");
