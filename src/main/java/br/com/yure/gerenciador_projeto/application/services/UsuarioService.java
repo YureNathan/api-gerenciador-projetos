@@ -8,6 +8,7 @@ import br.com.yure.gerenciador_projeto.domain.reposity.UsuarioRepository;
 import br.com.yure.gerenciador_projeto.domain.valueobjects.EnumStatusUsuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,7 +19,8 @@ public class UsuarioService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
-
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     public List<UsuarioResponseDto> listarTodos(){
 
         try {
@@ -45,6 +47,7 @@ public class UsuarioService {
 
     public UsuarioResponseDto salvarUsuario(UsuarioCriarRequestDto usuarioRequest) throws Exception {
         Usuario usuario = new Usuario(usuarioRequest);
+        usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
         usuarioRepository.save(usuario);
         return new UsuarioResponseDto(usuario);
     }
@@ -61,7 +64,7 @@ public class UsuarioService {
            alterarStatusUsuario(usuario,EnumStatusUsuario.EXCLUIDO);
             return true;
        }catch (Exception e){
-           System.out.print("Erro ao excluir usuaria!");
+           System.out.print("Erro ao excluir usuario!");
            return false;
        }
     }

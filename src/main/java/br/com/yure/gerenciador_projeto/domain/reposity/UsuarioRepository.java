@@ -19,7 +19,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario,Long> {
 
 
     // 1. findById ignorando status = EXCLUIDO
-    Optional<Usuario> findByIdAndStatusNot(Long id, EnumStatusUsuario status );
+    Optional<Usuario> findByIdAndStatusNot(Long id, EnumStatusUsuario status);
 
     // 2. findAll ignorando status = EXCLUIDO
     List<Usuario> findAllByStatusNot(EnumStatusUsuario status);

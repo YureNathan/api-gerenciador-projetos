@@ -1,11 +1,9 @@
 package br.com.yure.gerenciador_projeto.domain.entities;
 
-
 import br.com.yure.gerenciador_projeto.application.dto.usuario.UsuarioCriarRequestDto;
 import br.com.yure.gerenciador_projeto.domain.valueobjects.EnumStatusUsuario;
 import jakarta.persistence.*;
 import lombok.*;
-
 
 @Entity
 @Getter
@@ -22,9 +20,7 @@ public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String nome;
-
     private String senha;
 
     @Column(name="tipo_usuario", insertable = false, updatable = false,nullable = true)
@@ -32,10 +28,7 @@ public class Usuario {
 
     private String email;
 
-    private String telefone;
-
     private EnumStatusUsuario status = EnumStatusUsuario.ATIVO;
-
 
     public Usuario (UsuarioCriarRequestDto usuario){
         this.email =usuario.email();
