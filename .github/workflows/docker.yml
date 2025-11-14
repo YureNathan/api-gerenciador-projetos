@@ -2,7 +2,7 @@ name: CI/CD Docker build and Test
 
 on:
   push:
-    branches: ["main"]
+    branches: [ "main" ]
 
 jobs:
   build-and-test:
@@ -29,35 +29,12 @@ jobs:
         run: |
           echo "--- Status dos Contêineres (incluindo os que falharam) ---"
           docker-compose ps -a
-            
+          
           echo "--- Logs do Banco de Dados ---"
-          docker-compose logs meu-postgres-local 
-            
+          docker-compose logs postgres-db 
+          
           echo "--- Logs da API ---"
-          docker-compose logs api-aula
-
-      - name: 📞 Testar API (com retentativas)
-        run: |
-          echo "Aguardando a API ficar online... (Máx 2 min)"
-          n=0
-          until [ $n -ge 12 ]
-          do
-          # O "curl --fail" falha com exit code se o HTTP não for 200
-          if curl --fail http://localhost:8080/swagger-ui/index.html; then
-            echo "✅ API está online!"
-            break # Sucesso, sai do loop
-          fi
-            
-          n=$((n+1))
-          echo "Tentativa $n/12 falhou. Aguardando 10s..."
-          sleep 10
-          done
-            
-          # Se o loop terminar (n=12) sem sucesso, falha o build
-          if [ $n -eq 12 ]; then
-          echo "❌ API não respondeu após 2 minutos."
-          exit 1
-          fi
+          docker-compose logs api-spring
 
       - name: 🛑 Parar os contêineres após teste
         if: always()
@@ -74,6 +51,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/jovemapi:latest
-
-
+          tags: ${{ secrets.DOCKER_USERNAME }}/gerenciador_projeto:latest
