@@ -8,8 +8,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=123456
       - POSTGRES_DB=gerenciadorProjeto
-
-
+      -
     healthcheck:
 
       test: ["CMD-SHELL", "pg_isready -U postgres -d gerenciadorProjeto"]
@@ -19,8 +18,8 @@ services:
       start_period: 30s
 
 
-    volumes:
-      - postgres-data-local:/var/lib/postgresql/data
+#    volumes:
+#      - postgres-data-local:/var/lib/postgresql/data
 
   api-spring:
     container_name: api-gerenciador_projeto
