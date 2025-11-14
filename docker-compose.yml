@@ -3,31 +3,47 @@ services:
     image: postgres:latest
     container_name: meu-postgres-local
     ports:
-      - "5433:5432"
+      - "5433:5432" # A porta externa 5433 está mapeada para a 5432 interna
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=123456
-      - POSTGRES_DB=gerenciadorProjeto
+      - POSTGRES_DB=gerenciadorProjeto # <-- Nome do banco definido aqui
 
+    # CORREÇÃO 1: Healthcheck descomentado e configurado
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
-      interval: 10s       # Tenta a cada 10 segundos
+      # Testa usando as variáveis de ambiente corretas
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
       timeout: 5s
-      retries: 10         # Aumentamos as tentativas para 10
-      start_period: 90s   # <-- A GRANDE MUDANÇA
+      retries: 5
+      start_period: 30s # Tempo para o postgres iniciar antes de checar
+
+    # CORREÇÃO 4: Usando o volume definido abaixo
+    volumes:
+      - postgres-data-local:/var/lib/postgresql/data
 
   api-spring:
     container_name: api-gerenciador_projeto
-    build: .
+    build: . # Mantém o contexto de build (bom para dev local)
+
+    # CORREÇÃO 3: Usa uma variável para a tag da imagem.
+    # O GitHub Actions irá definir esta variável.
+    # Se não for definida, usa 'local/gerenciador_projeto:latest'
+    image: ${DOCKER_IMAGE_TAG:-local/gerenciador_projeto:latest}
+
     ports:
       - "8080:8080"
     environment:
+      # CORREÇÃO 2: Nome do banco corrigido (sem '_')
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/gerenciadorProjeto
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=123456
+
+    # Agora o 'depends_on' vai esperar pelo 'healthcheck' acima
     depends_on:
       postgres-db:
         condition: service_healthy
 
 volumes:
+  # Define o volume que será usado pelo 'postgres-db'
   postgres-data-local:
