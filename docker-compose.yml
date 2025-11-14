@@ -3,33 +3,45 @@ services:
     image: postgres:latest
     container_name: meu-postgres-local
     ports:
-      - "5432:5432"
+      - "5433:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=123456
       - POSTGRES_DB=gerenciadorProjeto
-    volumes:
-      - postgres-data-local:/var/lib/postgresql/data
+
+
     healthcheck:
 
-      test: [ "CMD-SHELL", "pg_isready -U postgres -d gerenciadorProjeto" ]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d gerenciadorProjeto"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 30s
 
+
+    volumes:
+      - postgres-data-local:/var/lib/postgresql/data
+
   api-spring:
-    container_name: gerenciador_projeto
+    container_name: api-gerenciador_projeto
     build: .
+
+
+    image: ${DOCKER_IMAGE_TAG:-local/gerenciador_projeto:latest}
+
     ports:
       - "8080:8080"
     environment:
+
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/gerenciadorProjeto
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=123456
+
+
     depends_on:
       postgres-db:
         condition: service_healthy
 
 volumes:
+
   postgres-data-local:
