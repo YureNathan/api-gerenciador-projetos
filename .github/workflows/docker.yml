@@ -74,4 +74,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/gerenciador_projeto:latest
+          tags: ${{secrets.DOCKER_USERNAME}}/gerenciador_projeto:latest

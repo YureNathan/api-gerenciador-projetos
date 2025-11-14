@@ -11,11 +11,12 @@ services:
     volumes:
       - postgres-data-local:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
-      interval: 10s       # Tenta a cada 10 segundos
+
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d gerenciadorProjeto" ]
+      interval: 10s
       timeout: 5s
-      retries: 10         # Aumentamos as tentativas para 10
-      start_period: 90s   # <-- A GRANDE MUDANÇA
+      retries: 5
+      start_period: 30s
 
   api-spring:
     container_name: gerenciador_projeto
