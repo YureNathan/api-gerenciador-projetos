@@ -11,8 +11,8 @@ services:
 
     # CORREÇÃO 1: Healthcheck descomentado e configurado
     healthcheck:
-      # Testa usando as variáveis de ambiente corretas
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      # Testa usando os valores exatos, em vez de variáveis
+      test: ["CMD-SHELL", "pg_isready -U postgres -d gerenciadorProjeto"]
       interval: 10s
       timeout: 5s
       retries: 5
