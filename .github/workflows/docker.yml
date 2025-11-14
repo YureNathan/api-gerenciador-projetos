@@ -75,3 +75,5 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/jovemapi:latest
+
+
