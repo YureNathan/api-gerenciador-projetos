@@ -10,37 +10,24 @@ services:
       - POSTGRES_DB=gerenciadorProjeto
 
     healthcheck:
-
-      test: ["CMD-SHELL", "pg_isready -U postgres -d gerenciadorProjeto"]
-      interval: 10s
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s       # Tenta a cada 10 segundos
       timeout: 5s
-      retries: 5
-      start_period: 30s
-
-
-#    volumes:
-#      - postgres-data-local:/var/lib/postgresql/data
+      retries: 10         # Aumentamos as tentativas para 10
+      start_period: 90s   # <-- A GRANDE MUDANÇA
 
   api-spring:
     container_name: api-gerenciador_projeto
     build: .
-
-
-    image: ${DOCKER_IMAGE_TAG:-local/gerenciador_projeto:latest}
-
     ports:
       - "8080:8080"
     environment:
-
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/gerenciadorProjeto
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=123456
-
-
     depends_on:
-      postgres-db:
+      gerenciadorProjeto:
         condition: service_healthy
 
 volumes:
-
   postgres-data-local:

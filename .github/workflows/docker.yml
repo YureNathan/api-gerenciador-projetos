@@ -2,15 +2,48 @@ name: CI/CD Docker build and Test
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
-  build-and-push:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout do código
         uses: actions/checkout@v3
+
+      - name: 🐋 Subir ambiente com Docker Compose (v2)
+        run: docker compose up -d
+
+      - name: ⏱️ Aguardar os contêineres estabilizarem
+        run: |
+          echo "Aguardando 30 segundos para os serviços iniciarem..."
+          sleep 30 
+
+      - name: 📞 Testar API (com retentativas)
+        run: |
+          echo "Aguardando a API ficar online... (Máx 2 min)"
+          n=0
+          until [ $n -ge 12 ]
+          do
+            if curl --fail http://localhost:8080/swagger-ui/index.html; then
+              echo "✅ API está online!"
+              break
+            fi
+
+            n=$((n+1))
+            echo "Tentativa $n/12 falhou. Aguardando 10s..."
+            sleep 10
+          done
+
+          if [ $n -eq 12 ]; then
+            echo "❌ API não respondeu após 2 minutos."
+            exit 1
+          fi
+
+      - name: 🛑 Parar os contêineres após teste
+        if: always()
+        run: docker compose down
 
       - name: ✅ Login no Docker Hub
         uses: docker/login-action@v2
@@ -18,41 +51,9 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: 🏷️ Definir tag da imagem
-        run: |
-          # Define a tag da imagem e a exporta para os próximos passos
-          # Isso garante que seu docker-compose.yml usará a imagem correta
-          echo "DOCKER_IMAGE_TAG=${{ secrets.DOCKER_USERNAME }}/gerenciador_projeto:latest" >> $GITHUB_ENV
-
-      - name: 🚀 Buildar e carregar imagem localmente
+      - name: 🚀 Build e Push da imagem para o Docker Hub
         uses: docker/build-push-action@v4
         with:
           context: .
-          push: false
-          load: true
-          tags: ${{ env.DOCKER_IMAGE_TAG }}
-
-      - name: 🐋 Subir ambiente com Docker Compose (para teste)
-
-        run: docker compose up -d
-
-      - name: 🩺 Verificar status dos contêineres pós-healthcheck
-        run: |
-          echo "Ambiente iniciado. Verificando status..."
-          docker compose ps
-          
-          echo "--- Logs do Banco de Dados (postgres-db) ---"
-          docker compose logs postgres-db
-          
-          echo "--- Logs da API (api-spring) ---"
-          docker compose logs api-spring
-
- 
-
-      - name: 🚀 Fazer Push da imagem para o Docker Hub
-        if: success()
-        run: docker push ${{ env.DOCKER_IMAGE_TAG }}
-
-      - name: 🛑 Parar os contêineres
-        if: always()
-        run: docker compose down
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/gerenciador_projeto:latest

@@ -25,7 +25,7 @@ public class TokenService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    @Value("${spring.minhapalavrafoda}")
+    @Value("${spring.palavraSecreta}")
     private String secret;
 
     private String emissor = "Samuel";
