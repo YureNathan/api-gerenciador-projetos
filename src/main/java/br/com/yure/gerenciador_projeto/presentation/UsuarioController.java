@@ -23,7 +23,7 @@ public class UsuarioController {
     private UsuarioService usuarioService;
 
     @GetMapping("/{id}")
-    @Operation(summary = "1. Consulta de usuario por ID", description = "Médoto responsavel por consultar um unico usuario por ID e se não existir retorna null!")
+    @Operation(summary = "Consulta de usuario por ID", description = "Médoto responsavel por consultar um unico usuario por ID e se não existir retorna null!")
     public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
         try {
 
@@ -43,13 +43,13 @@ public class UsuarioController {
     }
 
     @GetMapping
-    @Operation(summary = "2. Listar todos", description = "Método para listar todos os usuários!")
+    @Operation(summary = "Listar todos", description = "Método para listar todos os usuários!")
     public ResponseEntity<List<UsuarioResponseDto>> listarTodos() {
         return ResponseEntity.ok(usuarioService.listarTodos());
     }
 
     @PostMapping
-    @Operation(summary = "3. Criar usuario", description = "Metodo resposavel por criar usuário")
+    @Operation(summary = "Criar usuario", description = "Metodo resposavel por criar usuário")
     public ResponseEntity<?> criarUsuario(@RequestBody UsuarioCriarRequestDto usuario) {
 
         try {
@@ -62,7 +62,7 @@ public class UsuarioController {
 
 
     @PutMapping("/{id}")
-    @Operation(summary = "4. Atualizar usuario", description = "Metodo resposavel por atualizar usuário")
+    @Operation(summary = "Atualizar usuario", description = "Metodo resposavel por atualizar usuário")
     public ResponseEntity<?> atulizarUsuario(@PathVariable Long id, @RequestBody UsuarioCriarRequestDto usuario) {
 
         try {
@@ -74,7 +74,7 @@ public class UsuarioController {
     }
 
     @PatchMapping("/{id}/bloquear")
-    @Operation(summary = "5. Bloquear de usuário!", description = "Método responsavel por Bloquear um usuario")
+    @Operation(summary = "Bloquear de usuário!", description = "Método responsavel por Bloquear um usuario")
     public ResponseEntity<?> atualizarBloquear(@PathVariable Long id) {
 
         return usuarioService.bloquearUsuario(id) ?
@@ -83,7 +83,7 @@ public class UsuarioController {
     }
 
     @PatchMapping("/{id}/desbloquear")
-    @Operation(summary = "6. Desbloquear de usuário!", description = "Método responsavel por Desbloquear um usuario")
+    @Operation(summary = "Desbloquear de usuário!", description = "Método responsavel por Desbloquear um usuario")
     public ResponseEntity<?> atualizarDesbloquear(@PathVariable Long id) {
 
         return usuarioService.desbloquearUsuario(id) ?
@@ -92,7 +92,7 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "7. Delete de usuário!", description = "Método responsavel por deletar um usuario")
+    @Operation(summary = "Delete de usuário!", description = "Método responsavel por deletar um usuario")
     public ResponseEntity<?> deletarUsuario(@PathVariable Long id) {
         return usuarioService.excluirUsuario(id) ?
                 ResponseEntity.ok().build() :
